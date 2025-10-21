@@ -9,18 +9,20 @@
       </div>
       <div class="slider-inputs">
         <input
+          ref="minSlider"
           type="range"
           :min="absoluteMin"
           :max="absoluteMax"
-          :value="minBpm"
+          v-model.number="minBpm"
           @input="handleMinChange"
           class="slider slider-min"
         />
         <input
+          ref="maxSlider"
           type="range"
           :min="absoluteMin"
           :max="absoluteMax"
-          :value="maxBpm"
+          v-model.number="maxBpm"
           @input="handleMaxChange"
           class="slider slider-max"
         />
@@ -30,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 interface Props {
   modelValue: { min: number; max: number }
@@ -51,31 +53,45 @@ const emit = defineEmits<Emits>()
 
 const minBpm = ref(props.modelValue.min)
 const maxBpm = ref(props.modelValue.max)
+const minSlider = ref<HTMLInputElement | null>(null)
+const maxSlider = ref<HTMLInputElement | null>(null)
 
-const handleMinChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const newMin = parseInt(target.value)
-  
-  if (newMin <= maxBpm.value) {
-    minBpm.value = newMin
-    emit('update:modelValue', { min: minBpm.value, max: maxBpm.value })
+const handleMinChange = () => {
+  // Ensure minimum 5 BPM gap between min and max
+  if (minBpm.value > maxBpm.value - 5) {
+    minBpm.value = maxBpm.value - 5
   }
+  
+  // Ensure within bounds
+  if (minBpm.value < props.absoluteMin) {
+    minBpm.value = props.absoluteMin
+  }
+  
+  emit('update:modelValue', { min: minBpm.value, max: maxBpm.value })
 }
 
-const handleMaxChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const newMax = parseInt(target.value)
-  
-  if (newMax >= minBpm.value) {
-    maxBpm.value = newMax
-    emit('update:modelValue', { min: minBpm.value, max: maxBpm.value })
+const handleMaxChange = () => {
+  // Ensure minimum 5 BPM gap between min and max
+  if (maxBpm.value < minBpm.value + 5) {
+    maxBpm.value = minBpm.value + 5
   }
+  
+  // Ensure within bounds
+  if (maxBpm.value > props.absoluteMax) {
+    maxBpm.value = props.absoluteMax
+  }
+  
+  emit('update:modelValue', { min: minBpm.value, max: maxBpm.value })
 }
 
 // Sync with external changes
 watch(() => props.modelValue, (newValue) => {
-  minBpm.value = newValue.min
-  maxBpm.value = newValue.max
+  if (newValue.min !== minBpm.value) {
+    minBpm.value = newValue.min
+  }
+  if (newValue.max !== maxBpm.value) {
+    maxBpm.value = newValue.max
+  }
 }, { deep: true })
 </script>
 
@@ -140,44 +156,29 @@ watch(() => props.modelValue, (newValue) => {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #007bff;
+  width: 12px;
+  height: 24px;
+  background: white;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 6px;
   pointer-events: auto;
-  border: 2px solid white;
+  border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: -7px;
+  margin-top: -9px;
 }
 
 .slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #007bff;
+  width: 12px;
+  height: 24px;
+  background: white;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 6px;
   pointer-events: auto;
-  border: 2px solid white;
+  border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: -7px;
+  margin-top: -9px;
 }
 
-.slider-min::-webkit-slider-thumb {
-  background: #1e7e34;
-}
-
-.slider-min::-moz-range-thumb {
-  background: #1e7e34;
-}
-
-.slider-max::-webkit-slider-thumb {
-  background: #b02a37;
-}
-
-.slider-max::-moz-range-thumb {
-  background: #b02a37;
-}
 
 .slider-inputs::before {
   content: '';
@@ -193,10 +194,10 @@ watch(() => props.modelValue, (newValue) => {
 }
 
 .slider-min {
-  z-index: 2;
+  z-index: 3;
 }
 
 .slider-max {
-  z-index: 1;
+  z-index: 4;
 }
 </style>

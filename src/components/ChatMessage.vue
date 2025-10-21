@@ -16,13 +16,20 @@
       </div>
       
       <div class="album-covers">
-        <img 
+        <div 
           v-for="track in crate.tracks.slice(0, 6)" 
           :key="track.id"
-          :src="track.albumCover" 
-          :alt="track.title"
-          class="album-cover"
-        />
+          class="album-cover-container"
+        >
+          <img 
+            v-if="track.albumCover && track.albumCover !== ''" 
+            :src="track.albumCover" 
+            :alt="track.title"
+            class="album-cover"
+            @error="handleImageError"
+          />
+          <DefaultTrackCover v-else class="album-cover" />
+        </div>
         <div v-if="crate.tracks.length > 6" class="more-albums">
           +{{ crate.tracks.length - 6 }}
         </div>
@@ -36,11 +43,13 @@
 </template>
 
 <script setup lang="ts">
+import DefaultTrackCover from './DefaultTrackCover.vue'
+
 interface Track {
   id: string
   title: string
   artist: string
-  albumCover: string
+  albumCover: string | null
   bpm: number
   duration: number
 }
@@ -74,6 +83,11 @@ const formatTime = (date: Date) => {
     minute: '2-digit',
     hour12: true 
   })
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
 }
 </script>
 

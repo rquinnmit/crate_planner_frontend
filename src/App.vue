@@ -220,7 +220,7 @@ const handleSendMessage = (message: string) => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 #app {
   min-height: 100vh;
@@ -245,21 +245,31 @@ const handleSendMessage = (message: string) => {
   left: 2rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
+
 .music-icon {
-  font-size: 2.5rem;
-  color: #ff4500;
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff4500 0%, #ff8c00 50%, #ffa500 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.5));
 }
 
 .logo h1 {
-  color: #ffffff;
-  font-size: 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #ff8c00 50%, #ff4500 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.75rem;
   font-weight: 900;
   margin: 0;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
 }
 
 main {
@@ -288,16 +298,18 @@ main {
   
   .logo {
     left: 1rem;
+    gap: 0.75rem;
   }
   
   .music-icon {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
   
   .logo h1 {
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
+    font-size: 1.25rem;
+    letter-spacing: 1.5px;
   }
+  
   
   main {
     padding: 2rem 1rem;
